@@ -1,0 +1,64 @@
+# Phase 2: Availability Protections
+# PodDisruptionBudgets and HorizontalPodAutoscalers for tenant resilience
+
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: tenant-app-pdb
+  namespace: tenant-alpha
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: task-manager
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: tenant-app-hpa
+  namespace: tenant-alpha
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: task-manager
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: tenant-app-pdb
+  namespace: tenant-beta
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: task-manager
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: tenant-app-hpa
+  namespace: tenant-beta
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: task-manager
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70

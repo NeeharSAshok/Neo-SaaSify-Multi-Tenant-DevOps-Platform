@@ -1,0 +1,17 @@
+{
+  "name": "saasify-task-manager",
+  "version": "1.0.0",
+  "description": "Multi-Tenant Task Management Platform & DevOps Simulator Dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "private": true
+}

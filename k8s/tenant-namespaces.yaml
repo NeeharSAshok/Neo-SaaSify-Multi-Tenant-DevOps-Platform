@@ -1,0 +1,29 @@
+# Phase 1 & 2: Kubernetes namespaces for tenant isolation
+# Creating distinct namespaces for alpha, beta, and gamma tenants
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tenant-alpha
+  labels:
+    tenant: alpha
+    tier: production
+    purpose: task-management
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tenant-beta
+  labels:
+    tenant: beta
+    tier: production
+    purpose: task-management
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tenant-gamma
+  labels:
+    tenant: gamma
+    tier: staging
+    purpose: task-management

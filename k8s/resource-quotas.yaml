@@ -1,0 +1,41 @@
+# Phase 2: ResourceQuotas to prevent noisy neighbors
+# Setting CPU, Memory, and Pod constraints per namespace
+
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: tenant-quota
+  namespace: tenant-alpha
+spec:
+  hard:
+    pods: "10"
+    requests.cpu: "2"
+    requests.memory: 2Gi
+    limits.cpu: "4"
+    limits.memory: 4Gi
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: tenant-quota
+  namespace: tenant-beta
+spec:
+  hard:
+    pods: "10"
+    requests.cpu: "2"
+    requests.memory: 2Gi
+    limits.cpu: "4"
+    limits.memory: 4Gi
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: tenant-quota
+  namespace: tenant-gamma
+spec:
+  hard:
+    pods: "5"
+    requests.cpu: "1"
+    requests.memory: 1Gi
+    limits.cpu: "2"
+    limits.memory: 2Gi

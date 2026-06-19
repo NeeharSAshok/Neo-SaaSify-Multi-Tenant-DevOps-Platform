@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SaaSify DevOps & Multi-Tenant Platform</title>
+  <link rel="icon" href="https://ssl.gstatic.com/docs/doclist/images/drive_favicon_2026_32dp.png">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-mode">
+
+  <!-- Core Layout Wrapper -->
+  <div class="layout-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
+          <i class="fa-solid fa-cloud-bolt"></i>
+        </div>
+        <div class="brand-name">
+          <h2>SaaSify</h2>
+          <span>DevOps Portal</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-menu">
+        <button class="menu-item active" id="btn-dashboard" onclick="switchTab('dashboard')">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>CTO Dashboard</span>
+        </button>
+        <button class="menu-item" id="btn-app" onclick="switchTab('app')">
+          <i class="fa-solid fa-tasks"></i>
+          <span>Tenant App</span>
+        </button>
+        <button class="menu-item" id="btn-architecture" onclick="switchTab('architecture')">
+          <i class="fa-solid fa-network-wired"></i>
+          <span>K8s Topology</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="avatar">AN</div>
+          <div class="info">
+            <span class="name">Alex (CTO)</span>
+            <span class="role">Administrator</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Header -->
+      <header class="content-header">
+        <div class="header-title">
+          <h1 id="page-title">CTO DevOps & Observability Portal</h1>
+          <p id="page-subtitle">Real-time DORA metrics, SLO performance, and Kubernetes workload status.</p>
+        </div>
+        <div class="header-actions">
+          <div class="system-status healthy">
+            <span class="status-indicator"></span>
+            <span class="status-text">K8s Cluster: Active</span>
+          </div>
+          <div class="gitops-status synced" id="gitops-status-badge">
+            <i class="fa-solid fa-code-merge"></i>
+            <span>GitOps Synced</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- TAB 1: CTO DevOps Dashboard -->
+      <section class="tab-content" id="tab-dashboard">
+        
+        <!-- Summary Cards Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="card-icon blue"><i class="fa-solid fa-gauge-high"></i></div>
+            <div class="card-content">
+              <h3>Uptime SLO</h3>
+              <div class="value" id="stat-slo-uptime">99.96%</div>
+              <div class="trend positive"><i class="fa-solid fa-arrow-up"></i> Target &ge; 99.9%</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="card-icon green"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="card-content">
+              <h3>Security Incidents</h3>
+              <div class="value" id="stat-security-incidents">0</div>
+              <div class="trend neutral"><i class="fa-solid fa-circle-check"></i> Zero Breaches</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="card-icon purple"><i class="fa-solid fa-cubes"></i></div>
+            <div class="card-content">
+              <h3>Total Pod Replicas</h3>
+              <div class="value" id="stat-active-pods">5</div>
+              <div class="trend"><i class="fa-solid fa-network-wired"></i> Autoscaling Active</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="card-icon gold"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="card-content">
+              <h3>Noisy Neighbor Incidents</h3>
+              <div class="value" id="stat-noisy-neighbors">0</div>
+              <div class="trend positive"><i class="fa-solid fa-arrow-down"></i> Reduced by 90%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DORA Metrics Section -->
+        <div class="section-container">
+          <div class="section-header">
+            <h2>DORA Metrics (Velocity & Quality)</h2>
+            <span class="badge">Continuous Delivery</span>
+          </div>
+          <div class="dora-grid">
+            <!-- Deployment Frequency -->
+            <div class="dora-card healthy" id="dora-df-card">
+              <div class="dora-header">
+                <h3>Deployment Frequency</h3>
+                <span class="dora-status-badge">Daily</span>
+              </div>
+              <div class="dora-body">
+                <div class="dora-value" id="dora-df-val">1.2 deploys/day</div>
+                <div class="dora-progress-wrapper">
+                  <div class="dora-progress-bar" style="width: 85%;"></div>
+                </div>
+                <p class="target-desc">Target: Daily (Current: High Performer)</p>
+              </div>
+            </div>
+
+            <!-- Lead Time for Changes -->
+            <div class="dora-card healthy" id="dora-lt-card">
+              <div class="dora-header">
+                <h3>Lead Time for Changes</h3>
+                <span class="dora-status-badge">Elite</span>
+              </div>
+              <div class="dora-body">
+                <div class="dora-value" id="dora-lt-val">3.8 hours</div>
+                <div class="dora-progress-wrapper">
+                  <div class="dora-progress-bar" style="width: 92%;"></div>
+                </div>
+                <p class="target-desc">Target: &lt; 4 Hours (Elite Status)</p>
+              </div>
+            </div>
+
+            <!-- Change Failure Rate -->
+            <div class="dora-card healthy" id="dora-cfr-card">
+              <div class="dora-header">
+                <h3>Change Failure Rate</h3>
+                <span class="dora-status-badge">Healthy</span>
+              </div>
+              <div class="dora-body">
+                <div class="dora-value" id="dora-cfr-val">11.5%</div>
+                <div class="dora-progress-wrapper">
+                  <div class="dora-progress-bar warning" style="width: 11.5%;"></div>
+                </div>
+                <p class="target-desc">Target: &lt; 15% (Low Failure rate)</p>
+              </div>
+            </div>
+
+            <!-- MTTR -->
+            <div class="dora-card healthy" id="dora-mttr-card">
+              <div class="dora-header">
+                <h3>Mean Time to Recovery</h3>
+                <span class="dora-status-badge">Elite</span>
+              </div>
+              <div class="dora-body">
+                <div class="dora-value" id="dora-mttr-val">28 minutes</div>
+                <div class="dora-progress-wrapper">
+                  <div class="dora-progress-bar" style="width: 88%;"></div>
+                </div>
+                <p class="target-desc">Target: &lt; 30 Minutes (Fast Failover)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tenant Observability Grid & Simulator Panel -->
+        <div class="split-view">
+          
+          <!-- Tenant List & Resource Consumption -->
+          <div class="section-container tenant-observability">
+            <div class="section-header">
+              <h2>Tenant-Aware Monitoring (Prometheus/Loki)</h2>
+            </div>
+            
+            <div class="table-container">
+              <table class="metrics-table">
+                <thead>
+                  <tr>
+                    <th>Tenant (Namespace)</th>
+                    <th>Status</th>
+                    <th>CPU (Requests/Limits)</th>
+                    <th>Memory (Requests/Limits)</th>
+                    <th>Active Pods</th>
+                    <th>Latency (p95)</th>
+                    <th>SLA status</th>
+                  </tr>
+                </thead>
+                <tbody id="tenant-metrics-tbody">
+                  <!-- Dynamic rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Interactive Simulator Controller -->
+          <div class="section-container simulator-controls">
+            <div class="section-header">
+              <h2>DevOps Simulation Engine</h2>
+              <i class="fa-solid fa-gamepad header-icon"></i>
+            </div>
+            
+            <div class="controls-grid">
+              <button class="sim-btn purple" onclick="triggerSimulation('deploy')">
+                <i class="fa-solid fa-rocket"></i>
+                <div>
+                  <strong>Run GitOps Deploy</strong>
+                  <span>Build, test, scan, and deploy with ArgoCD</span>
+                </div>
+              </button>
+
+              <button class="sim-btn blue" id="btn-traffic-spike" onclick="triggerSimulation('traffic')">
+                <i class="fa-solid fa-bolt-lightning"></i>
+                <div>
+                  <strong>Traffic Spike (HPA Test)</strong>
+                  <span>Flood tenant-alpha with API requests</span>
+                </div>
+              </button>
+
+              <button class="sim-btn gold" id="btn-noisy-neighbor" onclick="triggerSimulation('noisy')">
+                <i class="fa-solid fa-dumpster-fire"></i>
+                <div>
+                  <strong>Noisy Neighbor Workload</strong>
+                  <span>Stress limits & test ResourceQuotas</span>
+                </div>
+              </button>
+
+              <button class="sim-btn green" onclick="triggerSimulation('security')">
+                <i class="fa-solid fa-shield-virus"></i>
+                <div>
+                  <strong>Network Policy Attack</strong>
+                  <span>Test zero-trust boundaries cross-namespace</span>
+                </div>
+              </button>
+
+              <button class="sim-btn red" onclick="triggerSimulation('outage')">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div>
+                  <strong>Node Failure Outage</strong>
+                  <span>Trigger node crash and test PDB resilience</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- System Logs and Event Feed -->
+        <div class="section-container log-section">
+          <div class="section-header">
+            <h2>Real-time Pipeline & Cluster Event Stream</h2>
+            <button class="clear-btn" onclick="clearLogs()"><i class="fa-solid fa-eraser"></i> Clear Stream</button>
+          </div>
+          <div class="log-stream" id="log-terminal">
+            <!-- Dynamic logs -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- TAB 2: Multi-Tenant Client Application -->
+      <section class="tab-content hidden" id="tab-app">
+        
+        <!-- Multi-tenant Switcher -->
+        <div class="tenant-selector-bar">
+          <span class="label">Switch Namespace Workspace:</span>
+          <div class="selector-buttons">
+            <button class="tenant-btn active alpha" onclick="switchTenant('alpha')">
+              <span class="dot"></span>
+              <strong>tenant-alpha</strong>
+              <span class="env-badge">Production</span>
+            </button>
+            <button class="tenant-btn beta" onclick="switchTenant('beta')">
+              <span class="dot"></span>
+              <strong>tenant-beta</strong>
+              <span class="env-badge">Production</span>
+            </button>
+            <button class="tenant-btn gamma" onclick="switchTenant('gamma')">
+              <span class="dot"></span>
+              <strong>tenant-gamma</strong>
+              <span class="env-badge dev">Staging</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="split-view app-view">
+          
+          <!-- Task Management Card -->
+          <div class="section-container app-card">
+            <div class="section-header">
+              <h2>Task Management Board</h2>
+              <span class="tenant-display" id="active-tenant-title">tenant-alpha Workspace</span>
+            </div>
+
+            <!-- Task Form -->
+            <form id="task-form" onsubmit="addTask(event)" class="task-form">
+              <input type="text" id="task-input" placeholder="Create a new task in this namespace..." required>
+              <button type="submit"><i class="fa-solid fa-plus"></i> Add Task</button>
+            </form>
+
+            <!-- Task List -->
+            <div class="task-list-container">
+              <ul class="task-list" id="task-list">
+                <!-- Dynamic tasks -->
+              </ul>
+            </div>
+          </div>
+
+          <!-- Educational Info Side Panel -->
+          <div class="section-container education-card">
+            <div class="section-header">
+              <h2>Active Kubernetes Tenant Isolation Policies</h2>
+            </div>
+            <div class="education-content" id="tenant-policy-info">
+              <!-- Dynamically populated education text explaining active K8s manifest files -->
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- TAB 3: Kubernetes Network Topology Visualizer -->
+      <section class="tab-content hidden" id="tab-architecture">
+        <div class="section-container topology-container">
+          <div class="section-header">
+            <h2>Live Kubernetes Cluster Namespace Topology</h2>
+            <p>Visualizing namespace isolation, resource quotas, and traffic flow blocks.</p>
+          </div>
+
+          <div class="k8s-cluster-box">
+            <div class="cluster-title">Kubernetes Cluster (EKS / GKE)</div>
+            
+            <div class="namespaces-row">
+              <!-- Namespace Alpha -->
+              <div class="namespace-box" id="node-ns-alpha">
+                <div class="ns-header">
+                  <span class="ns-title"><i class="fa-solid fa-box-open"></i> namespace: tenant-alpha</span>
+                  <span class="badge">Quota: 4 CPUs / 4Gi</span>
+                </div>
+                <div class="vault-sidecar"><i class="fa-solid fa-key"></i> Vault Secret Injector Active</div>
+                <div class="pods-row" id="k8s-pods-alpha">
+                  <div class="pod-replica"><i class="fa-solid fa-cube"></i> task-manager-pod-1</div>
+                  <div class="pod-replica"><i class="fa-solid fa-cube"></i> task-manager-pod-2</div>
+                </div>
+                <div class="network-policy-shield"><i class="fa-solid fa-shield-halved"></i> NetworkPolicy: Isolation Enforced</div>
+              </div>
+
+              <!-- Namespace Beta -->
+              <div class="namespace-box" id="node-ns-beta">
+                <div class="ns-header">
+                  <span class="ns-title"><i class="fa-solid fa-box-open"></i> namespace: tenant-beta</span>
+                  <span class="badge">Quota: 4 CPUs / 4Gi</span>
+                </div>
+                <div class="vault-sidecar"><i class="fa-solid fa-key"></i> Vault Secret Injector Active</div>
+                <div class="pods-row" id="k8s-pods-beta">
+                  <div class="pod-replica"><i class="fa-solid fa-cube"></i> task-manager-pod-1</div>
+                  <div class="pod-replica"><i class="fa-solid fa-cube"></i> task-manager-pod-2</div>
+                </div>
+                <div class="network-policy-shield"><i class="fa-solid fa-shield-halved"></i> NetworkPolicy: Isolation Enforced</div>
+              </div>
+
+              <!-- Namespace Gamma -->
+              <div class="namespace-box" id="node-ns-gamma">
+                <div class="ns-header">
+                  <span class="ns-title"><i class="fa-solid fa-box-open"></i> namespace: tenant-gamma</span>
+                  <span class="badge">Quota: 2 CPUs / 2Gi</span>
+                </div>
+                <div class="pods-row" id="k8s-pods-gamma">
+                  <div class="pod-replica"><i class="fa-solid fa-cube"></i> task-manager-pod-1</div>
+                </div>
+                <div class="network-policy-shield"><i class="fa-solid fa-shield-halved"></i> NetworkPolicy: Isolation Enforced</div>
+              </div>
+            </div>
+
+            <!-- Ingress Controller & Traffic routes -->
+            <div class="ingress-box">
+              <div class="ingress-header"><i class="fa-solid fa-network-wired"></i> Nginx Ingress Controller</div>
+              <div class="routes-container">
+                <div class="route-line active"><i class="fa-solid fa-arrow-right"></i> route: alpha.saasify.com &rarr; tenant-alpha</div>
+                <div class="route-line active"><i class="fa-solid fa-arrow-right"></i> route: beta.saasify.com &rarr; tenant-beta</div>
+                <div class="route-line active"><i class="fa-solid fa-arrow-right"></i> route: gamma.saasify.com &rarr; tenant-gamma</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

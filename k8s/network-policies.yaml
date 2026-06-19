@@ -1,0 +1,68 @@
+# Phase 2: Zero-Trust Networking
+# Denies cross-tenant traffic by default, only allowing traffic from ingress and monitoring
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-cross-tenant-traffic
+  namespace: tenant-alpha
+spec:
+  podSelector: {} # Selects all pods in the namespace
+  policyTypes:
+  - Ingress
+  ingress:
+  # Allow ingress traffic from external router/ingress controller (typically in ingress-nginx namespace)
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: ingress-nginx
+  # Allow traffic from prometheus monitoring namespace
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+  # Allow traffic from pods within the SAME namespace
+  - from:
+    - podSelector: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-cross-tenant-traffic
+  namespace: tenant-beta
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: ingress-nginx
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+  - from:
+    - podSelector: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-cross-tenant-traffic
+  namespace: tenant-gamma
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: ingress-nginx
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+  - from:
+    - podSelector: {}

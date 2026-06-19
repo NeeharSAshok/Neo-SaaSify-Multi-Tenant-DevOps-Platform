@@ -1,0 +1,105 @@
+# Phase 1: GitOps Pipeline
+# Automated build, lint, Trivy security scan, and push to container registry
+
+name: SaaSify CI/CD GitOps Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    name: Build, Lint & Test Application
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js Environment
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: './app/package.json'
+
+    - name: Install Application Dependencies
+      run: |
+        cd app
+        npm install
+
+    - name: Run Code Linter
+      run: |
+        cd app
+        npm run lint --if-present
+
+    - name: Run Unit & Integration Tests
+      run: |
+        cd app
+        npm test --if-present
+
+  security-scan:
+    name: Container Vulnerability Scan
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v3
+
+    # Build local container image for scanning
+    - name: Build Docker Image
+      run: |
+        docker build -t saasify-app:${{ github.sha }} ./app
+
+    # Phase 2: Run Trivy Security Scan to catch Critical and High CVEs
+    - name: Run Trivy Security Scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'saasify-app:${{ github.sha }}'
+        format: 'table'
+        exit-code: '1' # Fails build if issues are found
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
+
+  publish:
+    name: Publish Container Image & Trigger GitOps
+    runs-on: ubuntu-latest
+    needs: security-scan
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-qemu-action@v2
+
+    - name: Log in to GitHub Container Registry (GHCR)
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v4
+      with:
+        context: ./app
+        push: true
+        tags: |
+          ghcr.io/${{ github.repository }}/saasify-app:latest
+          ghcr.io/${{ github.repository }}/saasify-app:${{ github.sha }}
+
+    # GitOps Synchronization trigger (simulates committing version bump to manifest repo for ArgoCD)
+    - name: Trigger GitOps Deploy (ArgoCD Sync)
+      run: |
+        echo "Updating Kubernetes deployment manifests to tag ${{ github.sha }}..."
+        # In a real environment, you would use a tool like kustomize or write to a config repo
+        # git clone https://github.com/my-org/gitops-infra.git
+        # cd gitops-infra && kustomize edit set image ghcr.io/my-org/saasify-app:${{ github.sha }}
+        # git commit -am "Bump saasify-app to ${{ github.sha }}" && git push
+        echo "ArgoCD will detect modifications and synchronize the cluster."
