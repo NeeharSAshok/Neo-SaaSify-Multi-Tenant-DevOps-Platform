@@ -4,9 +4,6 @@
 # --- Stage 1: Dependency builder ---
 FROM node:22-alpine AS builder
 
-# Upgrade OS packages to patch known vulnerabilities
-RUN apk update && apk upgrade --no-cache
-
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm ci --only=production
