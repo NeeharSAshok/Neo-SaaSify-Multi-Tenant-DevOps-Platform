@@ -2,13 +2,21 @@
 # Minimizes container image footprint and vulnerability vectors
 
 # --- Stage 1: Dependency builder ---
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
+
+# Upgrade OS packages to patch known vulnerabilities
+RUN apk update && apk upgrade --no-cache
+
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm ci --only=production
 
 # --- Stage 2: Final secure runner ---
-FROM node:18-alpine
+FROM node:20-alpine
+
+# Upgrade OS packages to patch known vulnerabilities
+RUN apk update && apk upgrade --no-cache
+
 WORKDIR /usr/src/app
 
 # Set Node environment to production
