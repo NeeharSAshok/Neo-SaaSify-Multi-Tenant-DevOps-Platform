@@ -14,8 +14,15 @@ RUN npm ci --only=production
 # --- Stage 2: Final secure runner ---
 FROM node:22-alpine
 
-# Upgrade OS packages to patch known vulnerabilities
-RUN apk update && apk upgrade --no-cache
+# Upgrade OS packages to patch known vulnerabilities and remove developer tools / package managers to reduce attack surface
+RUN apk update && apk upgrade --no-cache && \
+    rm -rf /usr/local/lib/node_modules/npm \
+           /usr/local/lib/node_modules/corepack \
+           /opt/yarn-v* \
+           /usr/local/bin/npm \
+           /usr/local/bin/npx \
+           /usr/local/bin/yarn \
+           /usr/local/bin/yarnpkg
 
 WORKDIR /usr/src/app
 

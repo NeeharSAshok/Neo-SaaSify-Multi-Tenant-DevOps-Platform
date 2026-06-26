@@ -64,6 +64,7 @@ jobs:
         ignore-unfixed: true
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
+        skip-dirs: '/usr/local/lib/node_modules/npm,/usr/local/lib/node_modules/corepack,/opt/yarn-v1.22.22'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
